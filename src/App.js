@@ -3,13 +3,13 @@ import Notes from "./components/Notes";
 import { useState, useEffect } from "react";
 import noteServices from "../src/services/notes";
 import Notification from "./components/Notification";
-import Footer from "./components/Footer";
+
 
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNotes, setNewNotes] = useState("");
   const [showAll, setShowAll] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("some error happened...");
+  const [errorMessage, setErrorMessage] = useState("'Hello...'");
 
   useEffect(() => {
     noteServices.getAll().then((response) => {
@@ -58,6 +58,22 @@ const App = () => {
       });
   };
 
+  const deleteNote = (id) => {
+    noteServices
+      .remove(id)
+      .then(() => {
+        setNotes(notes.filter((n) => n.id !== id));
+      })
+      .catch((error) => {
+        setErrorMessage(
+          `Note '${notes.content}' was already removed from server`
+        );
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+        setNotes(notes.filter((n) => n.id !== id));
+      });
+  };
   return (
     <div className="container-note">
       <h1>Notes</h1>
@@ -66,6 +82,7 @@ const App = () => {
         <button className="btn-impor" onClick={() => setShowAll(!showAll)}>
           show {showAll ? "important" : "all"}
         </button>
+        
       </div>
       <ul>
         {notesToShow.map((note) => (
@@ -73,14 +90,16 @@ const App = () => {
             key={note.id}
             note={note}
             toggleImportance={() => toggleImportanceOf(note.id)}
+            deleteNote={() => deleteNote(note.id)}
           />
+          
         ))}
       </ul>
       <form onSubmit={addNote}>
         <input className="input" value={newNotes} onChange={handleNoteChange} />
         <button type="submit">save</button>
       </form>
-      <Footer />
+
     </div>
   );
 };

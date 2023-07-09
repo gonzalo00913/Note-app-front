@@ -53,3 +53,9 @@ li {
   margin: 15px;
   
 }
+.btn-delete{
+  border-radius: 10px;
+  margin: 5px;
+  background-color: rgb(225, 44, 44);
+  color: white;
+}
